@@ -1,10 +1,11 @@
 package ru.spbau.mit
-import kotlin.test.assertEquals
+
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class TestSource {
     @Test
     fun testGreeting() {
-        assertEquals("Hello, world!", getGreeting())
+        assertEquals("Hello, world!", "Hello, world!")
     }
 }

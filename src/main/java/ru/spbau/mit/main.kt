@@ -1,14 +1,3 @@
 package ru.spbau.mit
 
-fun getGreeting(): String {
-    val words = mutableListOf<String>()
-    words.add("Hello,")
-    
-    words.add("world!")
-
-    return words.joinToString(separator = " ")
-}
-
-fun main(args: Array<String>) {
-    println(getGreeting())
-}
+fun main(args: Array<String>) = SimpleRunner(StringInputer("-1 - +1"), ConsoleOutputer).run(SimpleInterpreter)
