@@ -23,7 +23,7 @@ class TestSource {
         }
 
         private fun nextWord(pos: PoS, gender: Gender): String {
-            return nextAlpha() + rules.first { (it.pos == pos) && (it.gender == gender) }.suffix
+            return nextAlpha() + Language.RULES.first { (it.pos == pos) && (it.gender == gender) }.suffix
         }
 
         private fun nextWords(desc: List<Pair<PoS, Gender>>): String {

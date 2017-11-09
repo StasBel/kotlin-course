@@ -6,51 +6,39 @@ enum class Gender { MALE, FEMALE }
 
 data class Rule(val suffix: String, val pos: PoS, val gender: Gender)
 
-val rules = setOf(
-        Rule("lios", PoS.ADJ, Gender.MALE),
-        Rule("liala", PoS.ADJ, Gender.FEMALE),
-        Rule("etr", PoS.NOUN, Gender.MALE),
-        Rule("etra", PoS.NOUN, Gender.FEMALE),
-        Rule("initis", PoS.VERB, Gender.MALE),
-        Rule("inites", PoS.VERB, Gender.FEMALE)
-)
-
-class PWord(raw: String) {
-    private val firstRule by lazy {
-        rules.firstOrNull { raw.endsWith(it.suffix) }
-    }
-
-    val pos: PoS? by lazy {
-        firstRule?.pos
-    }
-
-    val gender: Gender? by lazy {
-        firstRule?.gender
-    }
+object Language {
+    val RULES = setOf(
+            Rule("lios", PoS.ADJ, Gender.MALE),
+            Rule("liala", PoS.ADJ, Gender.FEMALE),
+            Rule("etr", PoS.NOUN, Gender.MALE),
+            Rule("etra", PoS.NOUN, Gender.FEMALE),
+            Rule("initis", PoS.VERB, Gender.MALE),
+            Rule("inites", PoS.VERB, Gender.FEMALE)
+    )
 }
 
-class PMessage(words: List<PWord>) {
-    private val oneGoodWord by lazy {
-        (words.size == 1) && (words.single().let { (it.pos != null) && (it.gender != null) })
-    }
+class PWord(raw: String) {
+    private val firstRule = Language.RULES.singleOrNull { raw.endsWith(it.suffix) }
 
-    private val sameGender by lazy {
-        words.map { it.gender }.let { (it.all { it != null }) && (it.distinct().size == 1) }
-    }
+    val pos: PoS? by lazy { firstRule?.pos }
 
-    private val notNounNumMatch by lazy {
+    val gender: Gender? by lazy { firstRule?.gender }
+}
+
+class PMessage(private val words: List<PWord>) {
+    private fun oneGoodWord() = (words.size == 1) && (words.single().let { (it.pos != null) && (it.gender != null) })
+
+    private fun sameGender() = words.map { it.gender }.let { (it.all { it != null }) && (it.distinct().size == 1) }
+
+    private fun notNounNumMatch(): Boolean {
         val adjPrefixNum = words.map { it.pos }.takeWhile { it == PoS.ADJ }.size
         val verbSuffixNum = words.map { it.pos }.reversed().takeWhile { it == PoS.VERB }.size
-        adjPrefixNum + verbSuffixNum == words.size - 1
+        return adjPrefixNum + verbSuffixNum == words.size - 1
     }
 
-    private val singleNoun by lazy {
-        words.map { it.pos }.count { it == PoS.NOUN } == 1
-    }
+    private fun singleNoun() = words.count { it.pos == PoS.NOUN } == 1
 
-    val singleSentence: Boolean by lazy {
-        oneGoodWord || (sameGender && notNounNumMatch && singleNoun)
-    }
+    fun singleSentence(): Boolean = oneGoodWord() || (sameGender() && notNounNumMatch() && singleNoun())
 }
 
 interface Solver {
@@ -63,7 +51,7 @@ object GrammarLessons : Solver {
 
     override fun solve(rawInput: String): String {
         val message = PMessage(words = parseWords(rawInput))
-        return if (message.singleSentence) "YES" else "NO"
+        return if (message.singleSentence()) "YES" else "NO"
     }
 }
 
