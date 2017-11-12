@@ -1,9 +1,29 @@
 package ru.spbau.mit
 
-import ru.spbau.mit.parser.ExprBaseVisitor
-import ru.spbau.mit.parser.ExprParser.*
+import org.antlr.v4.runtime.ParserRuleContext
+import ru.spbau.mit.parser.FunBaseVisitor
+import ru.spbau.mit.parser.FunParser
+import java.io.OutputStream
 
-class EvalVisitor : ExprBaseVisitor<Int>() {
+class EvalVisitor(private val outputStream: OutputStream) : FunBaseVisitor<Int>() {
+    private val context: Context = Context()
+
+    override fun visitFile(ctx: FunParser.FileContext): Int = with(ctx) {
+        block().eval(GlobalScope(outputStream))
+    }
+
+    override fun visitBlock(ctx: FunParser.BlockContext): Int {
+
+    }
+
+    private fun ParserRuleContext.eval(newScope: Scope? = null): Int {
+        newScope?.let { context.addScope() }
+        val returnValue = accept(this@EvalVisitor)
+        newScope?.let { context.removeScope() }
+        return returnValue
+    }
+
+    /*
     override fun visitProg(ctx: ProgContext): Int = this.visit(ctx.expr())
 
     override fun visitParentsExpr(ctx: ParentsExprContext): Int = this.visit(ctx.expr())
@@ -32,4 +52,5 @@ class EvalVisitor : ExprBaseVisitor<Int>() {
     }
 
     override fun visitLiteralExpr(ctx: LiteralExprContext): Int = ctx.value.text.toInt()
+    */
 }
