@@ -11,10 +11,7 @@ class TestSource {
             message: String? = null,
             solver: Solver = GrammarLessons
     ) {
-        val runner = object : Runner {
-            override fun run(solver: Solver) = assertEquals(expected, solver.solve(rawInput), message)
-        }
-        runner.run(solver)
+        assertEquals(expected, solver.solve(rawInput), message)
     }
 
     private object PCodedRandom {

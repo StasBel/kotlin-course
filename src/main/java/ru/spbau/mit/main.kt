@@ -55,14 +55,4 @@ object GrammarLessons : Solver {
     }
 }
 
-interface Runner {
-    fun run(solver: Solver)
-}
-
-object ConsoleRunner : Runner {
-    private fun readRawInput(): String = readLine()!!
-
-    override fun run(solver: Solver) = print(solver.solve(readRawInput()))
-}
-
-fun main(args: Array<String>) = ConsoleRunner.run(GrammarLessons)
+fun main(args: Array<String>) = print(GrammarLessons.solve(readLine()!!))
