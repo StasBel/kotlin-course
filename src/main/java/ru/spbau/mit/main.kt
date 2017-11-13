@@ -4,10 +4,7 @@ import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import ru.spbau.mit.parser.FunLexer
 import ru.spbau.mit.parser.FunParser
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.PrintStream
+import java.io.*
 
 
 private fun FunParser.setupErrorListener() {
@@ -25,7 +22,7 @@ private fun FunParser.setupErrorListener() {
 }
 
 
-fun interpret(inputStream: InputStream, outputStream: PrintStream) {
+fun interpret(inputStream: InputStream, outputStream: OutputStream) {
     val lexer = FunLexer(CharStreams.fromStream(inputStream))
     val parser = FunParser(BufferedTokenStream(lexer))
     parser.setupErrorListener()

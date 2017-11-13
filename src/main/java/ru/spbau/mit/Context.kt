@@ -9,9 +9,9 @@ class Context {
     private val currentScope: Scope
         get() = scopes.peek()
 
-    fun addScope(scope: Scope? = null) = scopes.add(scope?.let { Scope() })
+    fun addScope(scope: Scope) = scopes.push(scope)
 
-    fun removeScope() = scopes.pop()
+    fun removeScope(): Scope = scopes.pop()
 
     fun declareVariable(name: String) = currentScope.declareVariable(name)
 
@@ -28,9 +28,7 @@ class Context {
     }
 
     fun defineFunction(name: String, body: Function) {
-        scopes.firstOrNull { it.hasFunction(name) }
-                ?.defineFunction(name, body)
-                ?: throw ContextException("Function $name already in use.")
+        currentScope.defineFunction(name, body)
     }
 
     fun getFunction(name: String): Function {

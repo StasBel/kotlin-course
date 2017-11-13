@@ -5,7 +5,7 @@ file
     ;
 
 block
-    : (statement)*
+    : statement*
     ;
 
 statement
@@ -14,20 +14,24 @@ statement
     | expression
     | whileBlock
     | ifBlock
-    | assigment
+    | assignment
     | returnBlock
     ;
 
 function
-    : 'fun' name=ID '(' (arg=ID (',' arg=ID)*)? ')' '{' block '}'
+    : 'fun' name=ID '(' argumentNames ')' '{' block '}'
+    ;
+
+argumentNames
+    : (ID (',' ID)*)?
     ;
 
 variable
-    : 'var' name=ID ('=' expression)
+    : 'var' name=ID ('=' expression)?
     ;
 
 expression
-    : name=ID '(' (arg=expression (',' arg=expression)*)? ')'    # FuncCallExpr
+    : name=ID '(' arguments ')'                                  # FuncCallExpr
     | left=expression op=('*' |'/' |'%'     ) right=expression   # BinopExpr
     | left=expression op=('+' |'-'          ) right=expression   # BinopExpr
     | left=expression op=('<' |'<='|'>'|'>=') right=expression   # BinopExpr
@@ -35,7 +39,12 @@ expression
     | left=expression op= '&&'                right=expression   # BinopExpr
     | left=expression op= '||'                right=expression   # BinopExpr
     | value=LITERAL                                              # LiteralExpr
+    | name=ID                                                    # IDExpr
     | '('  expression ')'                                        # ParentsExpr
+    ;
+
+arguments
+    : (expression (',' expression)*)?
     ;
 
 whileBlock
@@ -46,7 +55,7 @@ ifBlock
     : 'if' '(' condition=expression ')' '{' trueBlock=block '}' ('else' '{' falseBlock=block '}')?
     ;
 
-assigment
+assignment
     : name=ID '=' expression
     ;
 
